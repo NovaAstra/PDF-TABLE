@@ -4,18 +4,7 @@
       <div class="vue-grid-layout" style="height: 209mm;">
         <div class="vue-grid-item" style="top: 40px;left: 10px;width: 1095px;height: 250px;position: absolute;">
           <div class="gridnew_gadget_tempalte">
-
-            <el-table :data="list"  height="250">
-              <el-table-column prop="Date" label="Date" width="100"> </el-table-column>
-              <el-table-column prop="Client" label="Client" width="100"> </el-table-column>
-              <el-table-column prop="ITS Member" label="ITS Member" width="100"> </el-table-column>
-              <el-table-column prop="Subject" label="Subject" width="100"> </el-table-column>
-              <el-table-column prop="Rating" label="Rating" width="100"> </el-table-column>
-              <el-table-column prop="Open to Reference?" label="Open to Reference" width="100"> </el-table-column>
-              <el-table-column prop="notes" label="notes"> </el-table-column>
-
-           
-             
+            <el-table :data="list" height="250">
             </el-table>
           </div>
         </div>
@@ -27,13 +16,10 @@
 import { nextTick } from "vue";
 
 import list from "./data.json";
-import { truncate } from "./truncate"
 
 
 nextTick(() => {
-  setTimeout(() => {
-    truncate()
-  }, 200)
+
 })
 </script>
 
@@ -71,7 +57,7 @@ nextTick(() => {
   height: 100%;
 }
 
-.el-table .el-table__cell{
+.el-table .el-table__cell {
   vertical-align: top;
 }
 </style>
