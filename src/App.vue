@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <div class="content">
-      1212123122311212 asadasdsadasd
-      1212123122311212 asadasdsadasd
-      1212123122311212 asadasdsadasd
+      1212123122311212 asadasdsadasd13
+      1212123122311212 asadasdsadasd2
+      1212123122311212 asadasdsadasd34
       1212123122311212 asadasdsadasd
       1212123122311212 asadasdsadasd
       1212123122311212 asadasdsadasd
@@ -25,20 +25,20 @@
         </div>
         <div>
           12123312312312312312123312 czxczxczxczxczxczx asdasdasdasd
-          12123312312312312312123312 czxczxczxczxczxczx asdasdasdasd
+          12123312312312312312123312 czxczxczxczxczxczx asdasdasdasd1
         </div>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-// import { nextTick } from "vue";
-// import { ellipsis } from "./blueprint/ellipsis"
+import { nextTick } from "vue";
+import { ellipsis } from "./blueprint/ellipsis"
 
 
-// nextTick(() => {
-//   ellipsis(document.querySelector('.content')!)
-// })
+nextTick(() => {
+  ellipsis(document.querySelector('.content')!)
+})
 
 </script>
 

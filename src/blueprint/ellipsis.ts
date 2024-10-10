@@ -31,6 +31,38 @@ const getClampValue = (element: HTMLElement, clamp: string | number | 'auto'): n
     return getMaxLines(element)
 }
 
+export function splitTextNode(
+    node: HTMLElement,
+    element: HTMLElement,
+    height: number,
+) {
+    if (!node.textContent) return false
+
+    let textContent = node.textContent
+
+    console.log(textContent)
+
+    const segments = textContent.split(/([.\-–— ])/)
+
+    let low = 0;
+    let high = segments.length;
+
+    while (low < high) {
+        const middle = Math.floor((low + high) / 2);
+
+        node.textContent = segments.slice(0, middle).join('');
+        if (getElemHeight(element) <= height) {
+            low = middle + 1;
+        } else {
+            high = middle;
+        }
+
+    }
+
+    node.textContent = segments.slice(0, low - 1).join('');
+    return getElemHeight(element) <= height;
+}
+
 export function splitHtmlElement(
     node: HTMLElement,
     element: HTMLElement,
@@ -58,19 +90,10 @@ export function splitHtmlElement(
 
         if (truncated) return true
 
-        element.removeChild(childNode)
+        node.removeChild(childNode)
     }
 
     return false
-}
-
-export function splitTextNode(
-    node: HTMLElement,
-    element: HTMLElement,
-    height: number,
-) {
-    if (!node.textContent) return false
-
 }
 
 /**
