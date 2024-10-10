@@ -85,7 +85,6 @@ export function splitTextNode(
 
     const segments = textContent.split(SPLIT_ON_CHARS_REGEX)
 
-
     let low = 0;
     let high = segments.length;
 

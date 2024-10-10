@@ -26,5 +26,5 @@ export interface WidgetPosition extends BasePosition {
 export interface LayoutPosition extends BasePosition { }
 
 export function blueprint() {
-
+    
 }
