@@ -21,4 +21,4 @@ export const getMaxLines = (element: HTMLElement, height?: number): number => {
     return Math.max(Math.floor(availHeight / lineHeight), 0)
 }
 
-export const getMaxHeight = (element: HTMLElement, clamp: number) => getLineHeight(element) * clamp
+export const getMaxHeight = (element: HTMLElement, clamp: number): number => getLineHeight(element) * clamp

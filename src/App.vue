@@ -32,14 +32,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import { nextTick } from "vue";
-import { ellipsis } from "./blueprint/ellipsis"
-
-
-nextTick(() => {
-  ellipsis(document.querySelector('.content')!)
-})
-
 </script>
 
 <style lang="css">
