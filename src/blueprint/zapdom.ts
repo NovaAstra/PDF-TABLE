@@ -1,3 +1,8 @@
+export type FrameData = {
+    delta: number
+    timestamp: number
+}
+
 export interface ZapdomOptions {
     concurrency: number;
 }
@@ -29,7 +34,9 @@ export class Zapdom {
         this.options = Object.assign({}, ZAPDOM_DEFAULT_OPTIONS, options)
     }
 
-    public start() { }
+    public async render() { }
+
+    public async update() { }
 }
 
 export function zapdom() {
