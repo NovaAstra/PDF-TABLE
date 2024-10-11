@@ -3,14 +3,13 @@ import { getMaxLines, getMaxHeight, getElemHeight } from "./dom"
 export interface EllipsisOptions {
     clamp: string | number | 'auto';
     splitOnChars: string[];
-    truncationChar: string;
     truncationHTML?: string;
 }
 
 export const ELLIPSIS_DEFAULT_OPTIONS = {
     clamp: 'auto',
     splitOnChars: [".", "-", "–", "—", " "],
-    truncationChar: '...'
+    truncationHTML: '...'
 } as const
 
 export class EllipsisResponse {
@@ -40,8 +39,6 @@ export function splitTextNode(
 
     let textContent = node.textContent
 
-    console.log(textContent)
-
     const segments = textContent.split(/([.\-–— ])/)
 
     let low = 0;
@@ -50,7 +47,7 @@ export function splitTextNode(
     while (low < high) {
         const middle = Math.floor((low + high) / 2);
 
-        node.textContent = segments.slice(0, middle).join('');
+        node.textContent = segments.slice(0, middle).join('')
         if (getElemHeight(element) <= height) {
             low = middle + 1;
         } else {
@@ -66,7 +63,8 @@ export function splitTextNode(
 export function splitHtmlElement(
     node: HTMLElement,
     element: HTMLElement,
-    height: number
+    height: number,
+    html?: HTMLElement
 ) {
     const childNodes = node.childNodes as unknown as HTMLElement[]
 
@@ -85,6 +83,8 @@ export function splitHtmlElement(
 
     while (idx > -1) {
         const childNode = childNodes[idx--]
+
+        if (html === childNode) continue
 
         const truncated = split(childNode)
 
@@ -112,7 +112,6 @@ export function splitHtmlElement(
  *       * `number`: Specifies the maximum number of lines allowed before truncation.
  *       * `string`: A pixel value (e.g., `'100px'`) defining the maximum height for the text before truncation.
  *    - `splitOnChars` {string[]} [default: [".", "-", "–", "—", " "]] - An array of characters to split on for truncation.
- *    - `truncationChar` {string} [default: '...'] - The character to use when truncating the text.
  *    - `truncationHTML` {string} [optional] - Optional HTML content to insert after the truncated text, replacing the default ellipsis.
  *
  * @returns {void} This function does not return a value.
@@ -130,5 +129,14 @@ export function ellipsis(element: HTMLElement, options?: Partial<EllipsisOptions
 
     if (getElemHeight(element) <= height) return new EllipsisResponse(false, fullHTML)
 
-    splitHtmlElement(element, element, height)
+    let innerHTML: string = ''
+    if (opts.truncationHTML) {
+        innerHTML += opts.truncationHTML
+    }
+
+    const html = document.createElement('span')
+    html.innerHTML = innerHTML
+    element.appendChild(html)
+
+    splitHtmlElement(element, element, height, html)
 }
