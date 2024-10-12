@@ -1,11 +1,5 @@
 import { getMaxLines, getMaxHeight, getElemHeight } from "./dom"
 
-export interface EllipsisOptions {
-    clamp: string | number | 'auto';
-    splitOnChars: string[];
-    truncationHTML?: string;
-}
-
 export const ELLIPSIS_DEFAULT_OPTIONS = {
     clamp: 'auto',
     splitOnChars: [".", "-", "–", "—", " "],
@@ -18,6 +12,30 @@ export class EllipsisResponse {
         public readonly fullHTML: string = '',
         public readonly cutedHTML: string = '',
     ) { }
+}
+
+export class EllipsisOptions {
+    public clamp: string | number | 'auto' = 'auto'
+    public splitOnChars: string[] = [".", "-", "–", "—", " "]
+    public truncationHTML?: string
+
+    private get regex(): RegExp {
+        const specialChars = /[.*+?^${}()|[\]\\]/g;
+        const escapedChars = this.splitOnChars.map(s => s.replace(specialChars, '\\$&')).join('|');
+        return new RegExp(`(${escapedChars})`, 'g')
+    }
+
+    public constructor(
+        public options?: Partial<EllipsisOptions>
+    ) {
+        this.clamp = options?.clamp || 'auto'
+        this.splitOnChars = options?.splitOnChars || [".", "-", "–", "—", " "]
+        this.truncationHTML = options?.truncationHTML
+    }
+
+    public getSplitText(text: string) {
+        return text.split(this.regex)
+    }
 }
 
 const getClampValue = (element: HTMLElement, clamp: string | number | 'auto'): number => {
@@ -34,12 +52,13 @@ export function splitTextNode(
     node: HTMLElement,
     element: HTMLElement,
     height: number,
+    options: EllipsisOptions
 ) {
     if (!node.textContent) return false
 
     let textContent = node.textContent
 
-    const segments = textContent.split(/([.\-–— ])/)
+    const segments = options.getSplitText(textContent)
 
     let low = 0;
     let high = segments.length;
@@ -53,18 +72,46 @@ export function splitTextNode(
         } else {
             high = middle;
         }
-
     }
 
-    node.textContent = segments.slice(0, low - 1).join('');
+    node.textContent = segments.slice(0, low).join('');
+    return splitTextChar(node, element, height, options)
+}
+
+export function splitTextChar(
+    node: HTMLElement,
+    element: HTMLElement,
+    height: number,
+    options: EllipsisOptions
+) {
+    let textContent = node.textContent!
+
+    let low = 0;
+    let high = textContent.length;
+
+    while (low < high) {
+        let middle = Math.floor((low + high) / 2);
+
+        node.textContent = textContent.substring(0, middle);
+
+        if (getElemHeight(element) <= height) {
+            low = middle + 1;
+        } else {
+            high = middle
+        }
+    }
+
+    node.textContent = textContent.substring(0, low - 1);
+
     return getElemHeight(element) <= height;
 }
+
 
 export function splitHtmlElement(
     node: HTMLElement,
     element: HTMLElement,
     height: number,
-    html?: HTMLElement
+    options: EllipsisOptions
 ) {
     const childNodes = node.childNodes as unknown as HTMLElement[]
 
@@ -73,9 +120,9 @@ export function splitHtmlElement(
     const split = (childNode: HTMLElement) => {
         switch (childNode.nodeType) {
             case 1:
-                return splitHtmlElement(childNode, element, height)
+                return splitHtmlElement(childNode, element, height, options)
             case 3:
-                return splitTextNode(childNode, element, height)
+                return splitTextNode(childNode, element, height, options)
             default:
                 return false
         }
@@ -83,8 +130,6 @@ export function splitHtmlElement(
 
     while (idx > -1) {
         const childNode = childNodes[idx--]
-
-        if (html === childNode) continue
 
         const truncated = split(childNode)
 
@@ -117,7 +162,7 @@ export function splitHtmlElement(
  * @returns {void} This function does not return a value.
  */
 export function ellipsis(element: HTMLElement, options?: Partial<EllipsisOptions>) {
-    const opts: Readonly<EllipsisOptions> = Object.assign({}, ELLIPSIS_DEFAULT_OPTIONS, options)
+    const opts: EllipsisOptions = new EllipsisOptions(options)
 
     if (!element.hasChildNodes()) return new EllipsisResponse(false)
 
@@ -129,14 +174,5 @@ export function ellipsis(element: HTMLElement, options?: Partial<EllipsisOptions
 
     if (getElemHeight(element) <= height) return new EllipsisResponse(false, fullHTML)
 
-    let innerHTML: string = ''
-    if (opts.truncationHTML) {
-        innerHTML += opts.truncationHTML
-    }
-
-    const html = document.createElement('span')
-    html.innerHTML = innerHTML
-    element.appendChild(html)
-
-    splitHtmlElement(element, element, height, html)
+    splitHtmlElement(element, element, height, opts)
 }

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="content">
-      1212123122311212 asadasdsadasd13
+      1212123122311212 asadasdsadasd13asa
       1212123122311212 asadasdsadasd2
       1212123122311212 asadasdsadasd34
       1212123122311212 asadasdsadasd
@@ -32,6 +32,12 @@
   </div>
 </template>
 <script setup lang="ts">
+import { nextTick } from "vue";
+import { ellipsis } from "./blueprint/ellipsis"
+
+nextTick(() => {
+  ellipsis(document.querySelector('.content')!)
+})
 </script>
 
 <style lang="css">
