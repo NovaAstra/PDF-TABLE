@@ -23,3 +23,9 @@ export const getMaxLines = (element: HTMLElement, height?: number): number => {
 
 export const getMaxHeight = (element: HTMLElement, clamp: number): number =>
     Math.max(getLineHeight(element) * clamp, parseFloat(computeStyle(element, "height")))
+
+export const getElemRect = (element: Element): DOMRect => element.getBoundingClientRect()
+
+export const toArray = (nodeList: any): HTMLElement[] => nodeList instanceof NodeList ?
+    Array.from(nodeList) : nodeList instanceof Array ? nodeList : []
+
