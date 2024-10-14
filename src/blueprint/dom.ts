@@ -22,7 +22,7 @@ export const getMaxLines = (element: HTMLElement, height?: number): number => {
 }
 
 export const getMaxHeight = (element: HTMLElement, clamp: number): number =>
-    Math.max(getLineHeight(element) * clamp, parseFloat(computeStyle(element, "height")))
+    Math.max(getLineHeight(element) * clamp, parseFloat(element.style.height) || 0)
 
 export const getElemRect = (element: Element): DOMRect => element.getBoundingClientRect()
 

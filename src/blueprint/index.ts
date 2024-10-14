@@ -78,7 +78,7 @@ export const getComponentPosition = (element: Element, offset: [number, number] 
     }
 
     if (component === 'table') {
-
+        Object.assign(position, getTables(position, viewport))
     }
 
     if (component === 'list') {
@@ -119,9 +119,13 @@ export const getWidgets = (parent: Element | Document = document, viewport: Posi
     let positions: ComponentPosition[] = []
 
     while (start <= end) {
+        if (elements[start].children.length > 0) {
+            positions.push(getComponentPosition(elements[start], offset, viewport))
+        }
 
-        positions[start] = getComponentPosition(elements[start], offset, viewport)
-        positions[end] = getComponentPosition(elements[end], offset, viewport)
+        if (elements[end].children.length > 0 && start !== end) {
+            positions.push(getComponentPosition(elements[end], offset, viewport))
+        }
 
         start++;
         end--;
